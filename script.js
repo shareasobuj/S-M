@@ -1,178 +1,150 @@
-// প্রাথমিক ডাটা চেক এবং ব্রাউজার মেমোরি সেটআপ
-if (!localStorage.getItem('notices')) localStorage.setItem('notices', JSON.stringify([]));
-if (!localStorage.getItem('members')) localStorage.setItem('members', JSON.stringify([]));
+// LocalStorage মেমোরি ইনিশিয়ালাইজেশন
+if (!localStorage.getItem('du_notices')) {
+    localStorage.setItem('du_notices', JSON.stringify([
+        { id: 1, type: 'general', title: 'শতবর্ষ উদযাপন ও সেমিনার সংক্রান্ত নোটিশ', desc: 'আগামী সপ্তাহে নবাব নওয়াব আলী চৌধুরী সিনেট ভবনে বিশেষ আন্তর্জাতিক সেমিনার অনুষ্ঠিত হবে।', date: '১৭ জুন, ২০২৬' }
+    ]));
+}
+if (!localStorage.getItem('du_faculty')) {
+    localStorage.setItem('du_faculty', JSON.stringify([
+        { id: 1, name: 'অধ্যাপক ড. এম. এ. রহমান', designation: 'বিভাগীয় প্রধান, সিএসই', bio: 'গবেষণার ক্ষেত্র: কৃত্রিম বুদ্ধিমত্তা এবং ডেটা সায়েন্স।', img: 'https://via.placeholder.com/150' }
+    ]));
+}
 
-// ডক এলিমেন্ট লোড হলে ডাটা শো করবে
+// পেজ লোড ইভেন্ট
 document.addEventListener("DOMContentLoaded", () => {
-    renderNotices();
-    renderMembers();
-    checkLoginState();
+    renderDUNotices();
+    renderDUFaculty();
+    checkAdminAuth();
 });
 
-// --- অ্যাডমিন অথেন্টিকেশন (লগইন / সাইন ইন সিস্টেম) ---
+// মডাল টগল
 function toggleAdminModal() {
     const modal = document.getElementById('loginModal');
     modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
 }
 
+// অ্যাডমিন অথেন্টিকেশন
 function loginAdmin() {
     const user = document.getElementById('username').value;
     const pass = document.getElementById('password').value;
 
-    // সিকিউরড লগইন ক্রেডেনশিয়াল (আপনি চাইলে পরিবর্তন করতে পারেন)
     if (user === "admin" && pass === "1234") {
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
-        checkLoginState();
+        sessionStorage.setItem('duAdmin', 'true');
+        checkAdminAuth();
         toggleAdminModal();
-        alert("অ্যাডমিন হিসেবে সফলভাবে লগইন হয়েছে!");
+        alert("ঢাকা বিশ্ববিদ্যালয় এডুকেশন পোর্টাল ড্যাশবোর্ডে স্বাগতম!");
     } else {
-        alert("ভুল ইউজারনেম অথবা পাসওয়ার্ড!");
+        alert("ভুল ক্রেডেনশিয়াল! সঠিক তথ্য দিন।");
     }
 }
 
 function logoutAdmin() {
-    sessionStorage.removeItem('isAdminLoggedIn');
-    checkLoginState();
-    alert("লগআউট করা হয়েছে।");
+    sessionStorage.removeItem('duAdmin');
+    checkAdminAuth();
+    alert("সফলভাবে লগআউট করা হয়েছে।");
 }
 
-function checkLoginState() {
-    const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
-    const adminPanel = document.getElementById('adminPanel');
-    const adminBtn = document.getElementById('adminBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    if (isLoggedIn === 'true') {
-        adminPanel.style.display = 'block';
-        adminBtn.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-    } else {
-        adminPanel.style.display = 'none';
-        adminBtn.style.display = 'inline-block';
-        logoutBtn.style.display = 'none';
-    }
-    // প্রতিবার লগইন স্টেট পরিবর্তনের পর ডাটা রি-রেন্ডার হবে বাটন শো/হাইড করার জন্য
-    renderNotices();
-    renderMembers();
+function checkAdminAuth() {
+    const isLoggedIn = sessionStorage.getItem('duAdmin') === 'true';
+    document.getElementById('adminPanel').style.display = isLoggedIn ? 'block' : 'none';
+    document.getElementById('adminBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+    document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+    
+    // বাটন রি-রেন্ডার করার জন্য
+    renderDUNotices();
+    renderDUFaculty();
 }
 
-// --- নোটিশ বোর্ড CRUD অপারেশন ---
-function saveNotice() {
+// নোটিশ CRUD
+function addDUNotice() {
+    const type = document.getElementById('noticeType').value;
     const title = document.getElementById('noticeTitle').value;
     const desc = document.getElementById('noticeDesc').value;
-    if (!title || !desc) return alert("অনুগ্রহ করে সব ঘর পূরণ করুন!");
 
-    const notices = JSON.parse(localStorage.getItem('notices'));
-    const date = new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+    if (!title || !desc) return alert("দয়া করে শিরোনাম এবং বিবরণ লিখুন!");
 
-    notices.unshift({ id: Date.now(), title, desc, date }); // নতুন নোটিশ শুরুতে থাকবে
-    localStorage.setItem('notices', JSON.stringify(notices));
+    const notices = JSON.parse(localStorage.getItem('du_notices'));
+    const banglaDate = new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    // ফর্ম ক্লিয়ার
+    notices.unshift({ id: Date.now(), type, title, desc, date: banglaDate });
+    localStorage.setItem('du_notices', JSON.stringify(notices));
+
+    // ইনপুট ফিল্ড ক্লিয়ার
     document.getElementById('noticeTitle').value = '';
     document.getElementById('noticeDesc').value = '';
 
-    renderNotices();
+    renderDUNotices();
 }
 
-function renderNotices() {
-    const notices = JSON.parse(localStorage.getItem('notices'));
-    const container = document.getElementById('noticeContainer');
-    const isAdmin = sessionStorage.getItem('isAdminLoggedIn') === 'true';
-    
-    if (notices.length === 0) {
-        container.innerHTML = "<p>বর্তমানে কোনো নোটিশ নেই।</p>";
-        return;
-    }
+function renderDUNotices() {
+    const notices = JSON.parse(localStorage.getItem('du_notices'));
+    const container = document.getElementById('duNoticeContainer');
+    const isAdmin = sessionStorage.getItem('duAdmin') === 'true';
 
     container.innerHTML = notices.map(notice => `
-        <div class="notice-item">
+        <div class="notice-block">
+            <div class="n-meta">[${notice.type.toUpperCase()}] - প্রকাশিত: ${notice.date}</div>
             <h3>${notice.title}</h3>
-            <p class="notice-date">প্রকাশের তারিখ: ${notice.date}</p>
-            <p>${notice.desc}</p>
-            ${isAdmin ? `
-                <div class="crud-buttons">
-                    <button class="btn-delete" onclick="deleteNotice(${notice.id})">ডিলিট</button>
-                </div>
-            ` : ''}
+            <p style="font-size: 14px; color:#555; margin-top:5px;">${notice.desc}</p>
+            ${isAdmin ? `<button class="btn-del" onclick="deleteDUNotice(${notice.id})">মুছে ফেলুন</button>` : ''}
         </div>
     `).join('');
 }
 
-function deleteNotice(id) {
-    let notices = JSON.parse(localStorage.getItem('notices'));
+function deleteDUNotice(id) {
+    let notices = JSON.parse(localStorage.getItem('du_notices'));
     notices = notices.filter(n => n.id !== id);
-    localStorage.setItem('notices', JSON.stringify(notices));
-    renderNotices();
+    localStorage.setItem('du_notices', JSON.stringify(notices));
+    renderDUNotices();
 }
 
+// ফ্যাকাল্টি CRUD
+function addDUFaculty() {
+    const name = document.getElementById('facName').value;
+    const designation = document.getElementById('facDesignation').value;
+    const bio = document.getElementById('facBio').value;
+    let img = document.getElementById('facImg').value;
 
-// --- শিক্ষক ও শিক্ষার্থী ম্যানেজমেন্ট (CRUD) ---
-function saveMember() {
-    const role = document.getElementById('memberRole').value;
-    const name = document.getElementById('memberName').value;
-    const bio = document.getElementById('memberBio').value;
-    let img = document.getElementById('memberImg').value;
+    if (!name || !designation) return alert("নাম এবং পদবী অবশ্যই দিতে হবে!");
+    if (!img) img = 'https://via.placeholder.com/150';
 
-    if (!name || !bio) return alert("নাম এবং বায়োডাটা আবশ্যক!");
-    // ইমেজ ফাকা থাকলে ডিফল্ট ডামি ইমেজ বসবে
-    if (!img) img = "https://via.placeholder.com/150";
+    const faculties = JSON.parse(localStorage.getItem('du_faculty'));
+    faculties.push({ id: Date.now(), name, designation, bio, img });
+    localStorage.setItem('du_faculty', JSON.stringify(faculties));
 
-    const members = JSON.parse(localStorage.getItem('members'));
-    members.push({ id: Date.now(), role, name, bio, img });
-    localStorage.setItem('members', JSON.stringify(members));
+    // ক্লিয়ার ফিল্ড
+    document.getElementById('facName').value = '';
+    document.getElementById('facDesignation').value = '';
+    document.getElementById('facBio').value = '';
+    document.getElementById('facImg').value = '';
 
-    // ফর্ম রিসেট
-    document.getElementById('memberName').value = '';
-    document.getElementById('memberBio').value = '';
-    document.getElementById('memberImg').value = '';
-
-    renderMembers();
+    renderDUFaculty();
 }
 
-function renderMembers() {
-    const members = JSON.parse(localStorage.getItem('members'));
-    const teachersContainer = document.getElementById('teachersContainer');
-    const studentsContainer = document.getElementById('studentsContainer');
-    const isAdmin = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+function renderDUFaculty() {
+    const faculties = JSON.parse(localStorage.getItem('du_faculty'));
+    const container = document.getElementById('duFacultyContainer');
+    const isAdmin = sessionStorage.getItem('duAdmin') === 'true';
 
-    // কন্টেইনার খালি করা
-    teachersContainer.innerHTML = '';
-    studentsContainer.innerHTML = '';
+    if(faculties.length === 0) {
+        container.innerHTML = "<p>কোনো শিক্ষক প্রোফাইল পাওয়া যায়নি।</p>";
+        return;
+    }
 
-    let hasTeachers = false;
-    let hasStudents = false;
+    container.innerHTML = faculties.map(fac => `
+        <div class="faculty-card">
+            <img src="${fac.img}" alt="${fac.name}">
+            <h4>${fac.name}</h4>
+            <p style="color: #c0392b; font-weight:bold; font-size:13px; margin:4px 0;">${fac.designation}</p>
+            <p style="font-size:12px; color:#666;">${fac.bio}</p>
+            ${isAdmin ? `<button class="btn-del" onclick="deleteDUFaculty(${fac.id})">প্রোফাইল বাদ দিন</button>` : ''}
+        </div>
+    `).join('');
+}
 
-    members.forEach(member => {
-        const cardHTML = `
-            <div class="profile-card">
-                <img src="${member.img}" alt="${member.name}">
-                <h4>${member.name}</h4>
-                <p style="font-size:14px; color:#555;">${member.bio}</p>
-                ${isAdmin ? `
-                    <div class="crud-buttons">
-                        <button class="btn-delete" onclick="deleteMember(${member.id})">ডিলিট</button>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-
-        if (member.role === 'teacher') {
-            teachersContainer.innerHTML += cardHTML;
-            hasTeachers = true;
-        } else if (member.role === 'student') {
-            studentsContainer.innerHTML += cardHTML;
-            hasStudents = true;
+function deleteDUFaculty(id) {
+    let faculties = JSON.parse(localStorage.getItem('du_faculty'));
+    faculties = faculties.filter(f => f.id !== id);
+    localStorage.setItem('du_faculty', JSON.stringify(faculties));
+    renderDUFaculty();
         }
-    });
-
-    if (!hasTeachers) teachersContainer.innerHTML = "<p>কোনো শিক্ষকের তথ্য পাওয়া যায়নি।</p>";
-    if (!hasStudents) studentsContainer.innerHTML = "<p>কোনো শিক্ষার্থীর তথ্য পাওয়া যায়নি।</p>";
-}
-
-function deleteMember(id) {
-    let members = JSON.parse(localStorage.getItem('members'));
-    members = members.filter(m => m.id !== id);
-    localStorage.setItem('members', JSON.stringify(members));
-    renderMembers();
-      }
