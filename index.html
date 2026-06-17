@@ -1,89 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সরকারি কলেজ - অনলাইন পোর্টাল</title>
+    <title>ঢাকা বিশ্ববিদ্যালয় | ক্লোন পোর্টাল</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <div class="logo-area">
-            <h2>গভর্নমেন্ট কলেজ পোর্টাল</h2>
-            <p>শিক্ষা, একতা, প্রগতি</p>
+    <div class="top-bar">
+        <div class="top-container">
+            <span>স্থাপিত: ১৯২১ | শতবর্ষের আলোয় ঢাকা বিশ্ববিদ্যালয়</span>
+            <div class="top-links">
+                <a href="#">ইমেইল</a>
+                <a href="#">লগইন</a>
+                <button id="adminBtn" onclick="toggleAdminModal()">অ্যাডমিন প্যানেল</button>
+                <button id="logoutBtn" onclick="logoutAdmin()" style="display:none;">লগআউট</button>
+            </div>
         </div>
-        <nav>
-            <a href="#home">হোম</a>
-            <a href="#notice-section">নোটিশ বোর্ড</a>
-            <a href="#gallery-section">শিক্ষক ও শিক্ষার্থী</a>
-            <button id="adminBtn" onclick="toggleAdminModal()">অ্যাডমিন লগইন</button>
-            <button id="logoutBtn" onclick="logoutAdmin()" style="display:none;">লগআউট</button>
-        </nav>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="du-logo-placeholder">DU</div>
+                <div class="brand-text">
+                    <h1>ঢাকা বিশ্ববিদ্যালয়</h1>
+                    <p>UNIVERSITY OF DHAKA</p>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <section id="home" class="hero">
-        <h1>স্বাগতম ডিজিটাল কলেজ পোর্টালে</h1>
-        <p>কোডিং ছাড়াই নোটিশ এবং মেম্বার প্রোফাইল ম্যানেজ করুন সহজে।</p>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <ul>
+                <li><a href="#home">হোম</a></li>
+                <li class="dropdown">
+                    <a href="#">পরিচিতি ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">সংক্ষিপ্ত ইতিহাস</a></li>
+                        <li><a href="#">উপাচার্য মহোদয়ের বাণী</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">একাডেমিক ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">অনুষদসমূহ</a></li>
+                        <li><a href="#">বিভাগসমূহ</a></li>
+                        <li><a href="#">ইনস্টিটিউট</a></li>
+                    </ul>
+                </li>
+                <li><a href="#notice-section">নোটিশ বোর্ড</a></li>
+                <li><a href="#faculty-section">শিক্ষক মণ্ডলী</a></li>
+                <li><a href="#research-section">গবেষণা ও প্রকাশনা</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="home" class="hero-slider">
+        <div class="slider-content">
+            <h2>শিক্ষাই আলো</h2>
+            <p>ঢাকা বিশ্ববিদ্যালয় দেশের অগ্রযাত্রার প্রতিটি ঐতিহাসিক অধ্যায়ের গর্বিত অংশীদার।</p>
+        </div>
     </section>
 
-    <div class="container">
-        <div id="adminPanel" class="admin-panel" style="display: none;">
-            <h2>Dashboard: অ্যাডমিন কন্ট্রোল প্যানেল</h2>
-            <hr>
-            <div class="form-grid">
-                <div class="form-card">
-                    <h3>নতুন নোটিশ যোগ করুন</h3>
-                    <input type="text" id="noticeTitle" placeholder="নোটিশের শিরোনাম">
-                    <textarea id="noticeDesc" placeholder="নোটিশের বিস্তারিত বিবরণ"></textarea>
-                    <button onclick="saveNotice()">নোটিশ পাবলিশ করুন</button>
-                </div>
-                <div class="form-card">
-                    <h3>শিক্ষক/শিক্ষার্থী যুক্ত করুন</h3>
-                    <select id="memberRole">
-                        <option value="teacher">শিক্ষক (Teacher)</option>
-                        <option value="student">শিক্ষার্থী (Student)</option>
+    <div class="main-wrapper">
+        
+        <div id="adminPanel" class="admin-dashboard" style="display: none;">
+            <h2>DU CMS: কন্ট্রোল ড্যাশবোর্ড</h2>
+            <p>কোডিং পরিবর্তন না করেই নোটিশ, শিক্ষক এবং গবেষণা ডাটা আপডেট করুন।</p>
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h3>১. নতুন নোটিশ যোগ করুন</h3>
+                    <select id="noticeType">
+                        <option value="general">সাধারণ নোটিশ</option>
+                        <option value="academic">একাডেমিক নোটিশ</option>
+                        <option value="admission">ভর্তি সংক্রান্ত নোটিশ</option>
                     </select>
-                    <input type="text" id="memberName" placeholder="নাম">
-                    <input type="text" id="memberBio" placeholder="পদবী / বায়োডাটা">
-                    <input type="text" id="memberImg" placeholder="ছবির ইউআরএল (অথবা অনলাইন লিংক)">
-                    <button onclick="saveMember()">ডাটা সেভ করুন</button>
+                    <input type="text" id="noticeTitle" placeholder="নোটিশের শিরোনাম">
+                    <textarea id="noticeDesc" placeholder="বিস্তারিত বিবরণ..."></textarea>
+                    <button onclick="addDUNotice()">নোটিশ প্রকাশ করুন</button>
+                </div>
+                <div class="admin-card">
+                    <h3>২. শিক্ষক/প্রোফাইল যুক্ত করুন</h3>
+                    <input type="text" id="facName" placeholder="শিক্ষকের নাম">
+                    <input type="text" id="facDesignation" placeholder="পদবী (যেমন: অধ্যাপক, কম্পিউটার বিজ্ঞান)">
+                    <input type="text" id="facBio" placeholder="ছোট জীবনবৃত্তান্ত বা গবেষণার ক্ষেত্র">
+                    <input type="text" id="facImg" placeholder="ছবির অনলাইন ইউআরএল (ঐচ্ছিক)">
+                    <button onclick="addDUFaculty()">প্রোফাইল সেভ করুন</button>
                 </div>
             </div>
         </div>
 
-        <section id="notice-section" class="main-section">
-            <h2 class="section-title">সর্বশেষ নোটিশ বোর্ড</h2>
-            <div id="noticeContainer" class="notice-list">
+        <div class="content-grid">
+            
+            <div class="left-column" id="notice-section">
+                <div class="section-header">
+                    <h2>সর্বশেষ নোটিশ বোর্ড</h2>
+                </div>
+                <div class="notice-tabs">
+                    <button class="tab-btn active" onclick="filterNotice('all')">সব নোটিশ</button>
+                </div>
+                <div id="duNoticeContainer" class="notice-holder">
+                    </div>
+            </div>
+
+            <div class="right-column">
+                <div class="vc-card">
+                    <h3>উপাচার্যের বার্তা</h3>
+                    <img src="https://via.placeholder.com/150" alt="VC Profile">
+                    <p><strong>অধ্যাপক ড. ....</strong></p>
+                    <p class="vc-text">ঢাকা বিশ্ববিদ্যালয়ে আপনাকে স্বাগত জানাতে পেরে আমি আনন্দিত। ১৯২১ সালে প্রতিষ্ঠার পর থেকে এই বিশ্ববিদ্যালয় জ্ঞান চর্চার প্রধান কেন্দ্র হিসেবে কাজ করছে...</p>
+                    <a href="#" class="read-more">বিস্তারিত পড়ুন ➔</a>
+                </div>
+
+                <div class="links-card">
+                    <h3>গুরুত্বপূর্ণ লিংক</h3>
+                    <ul>
+                        <li><a href="#">➔ কেন্দ্রীয় লাইব্রেরি পোর্টাল</a></li>
+                        <li><a href="#">➔ ভর্তি পরীক্ষার ওয়েবসাইট</a></li>
+                        <li><a href="#">➔ ডিইউ ইনোভেশন ল্যাব</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <section id="faculty-section" class="full-section">
+            <div class="section-header">
+                <h2>সম্মানিত শিক্ষক মণ্ডলী</h2>
+            </div>
+            <div id="duFacultyContainer" class="faculty-grid">
                 </div>
         </section>
 
-        <section id="gallery-section" class="main-section">
-            <h2 class="section-title">আমাদের শিক্ষক মণ্ডলী</h2>
-            <div id="teachersContainer" class="grid-layout">
-                </div>
-
-            <h2 class="section-title" style="margin-top: 40px;">শিক্ষার্থীবৃন্দ</h2>
-            <div id="studentsContainer" class="grid-layout">
-                </div>
-        </section>
     </div>
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="toggleAdminModal()">&times;</span>
-            <h2>অ্যাডমিন লগইন</h2>
-            <p style="font-size: 12px; color: gray; margin-bottom: 15px;">(ডিফল্ট ইউজার: admin | পাসওয়ার্ড: 1234)</p>
-            <input type="text" id="username" placeholder="ইউজারনেম">
+            <span class="close-btn" onclick="toggleAdminModal()">&times;</span>
+            <h2>DU Portal: অ্যাডমিন সাইন-ইন</h2>
+            <p style="font-size: 11px; color:#777; margin-bottom:15px;">(Username: `admin` | Password: `1234` )</p>
+            <input type="text" id="username" placeholder="অ্যাডমিন ইউজারনেম">
             <input type="password" id="password" placeholder="পাসওয়ার্ড">
-            <button onclick="loginAdmin()">প্রবেশ করুন</button>
+            <button onclick="loginAdmin()">লগইন করুন</button>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2026 সরকারি কলেজ। সর্বস্বত্ব সংরক্ষিত।</p>
+        <div class="footer-container">
+            <p>© 2026 ঢাকা বিশ্ববিদ্যালয়। সর্বস্বত্ব সংরক্ষিত। (ক্লোন পোর্টাল প্রজেক্ট)</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
-                  </html>
+</html>
