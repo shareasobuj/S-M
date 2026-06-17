@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সরকারি কলেজ - অনলাইন পোর্টাল</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h2>গভর্নমেন্ট কলেজ পোর্টাল</h2>
+            <p>শিক্ষা, একতা, প্রগতি</p>
+        </div>
+        <nav>
+            <a href="#home">হোম</a>
+            <a href="#notice-section">নোটিশ বোর্ড</a>
+            <a href="#gallery-section">শিক্ষক ও শিক্ষার্থী</a>
+            <button id="adminBtn" onclick="toggleAdminModal()">অ্যাডমিন লগইন</button>
+            <button id="logoutBtn" onclick="logoutAdmin()" style="display:none;">লগআউট</button>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <h1>স্বাগতম ডিজিটাল কলেজ পোর্টালে</h1>
+        <p>কোডিং ছাড়াই নোটিশ এবং মেম্বার প্রোফাইল ম্যানেজ করুন সহজে।</p>
+    </section>
+
+    <div class="container">
+        <div id="adminPanel" class="admin-panel" style="display: none;">
+            <h2>Dashboard: অ্যাডমিন কন্ট্রোল প্যানেল</h2>
+            <hr>
+            <div class="form-grid">
+                <div class="form-card">
+                    <h3>নতুন নোটিশ যোগ করুন</h3>
+                    <input type="text" id="noticeTitle" placeholder="নোটিশের শিরোনাম">
+                    <textarea id="noticeDesc" placeholder="নোটিশের বিস্তারিত বিবরণ"></textarea>
+                    <button onclick="saveNotice()">নোটিশ পাবলিশ করুন</button>
+                </div>
+                <div class="form-card">
+                    <h3>শিক্ষক/শিক্ষার্থী যুক্ত করুন</h3>
+                    <select id="memberRole">
+                        <option value="teacher">শিক্ষক (Teacher)</option>
+                        <option value="student">শিক্ষার্থী (Student)</option>
+                    </select>
+                    <input type="text" id="memberName" placeholder="নাম">
+                    <input type="text" id="memberBio" placeholder="পদবী / বায়োডাটা">
+                    <input type="text" id="memberImg" placeholder="ছবির ইউআরএল (অথবা অনলাইন লিংক)">
+                    <button onclick="saveMember()">ডাটা সেভ করুন</button>
+                </div>
+            </div>
+        </div>
+
+        <section id="notice-section" class="main-section">
+            <h2 class="section-title">সর্বশেষ নোটিশ বোর্ড</h2>
+            <div id="noticeContainer" class="notice-list">
+                </div>
+        </section>
+
+        <section id="gallery-section" class="main-section">
+            <h2 class="section-title">আমাদের শিক্ষক মণ্ডলী</h2>
+            <div id="teachersContainer" class="grid-layout">
+                </div>
+
+            <h2 class="section-title" style="margin-top: 40px;">শিক্ষার্থীবৃন্দ</h2>
+            <div id="studentsContainer" class="grid-layout">
+                </div>
+        </section>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleAdminModal()">&times;</span>
+            <h2>অ্যাডমিন লগইন</h2>
+            <p style="font-size: 12px; color: gray; margin-bottom: 15px;">(ডিফল্ট ইউজার: admin | পাসওয়ার্ড: 1234)</p>
+            <input type="text" id="username" placeholder="ইউজারনেম">
+            <input type="password" id="password" placeholder="পাসওয়ার্ড">
+            <button onclick="loginAdmin()">প্রবেশ করুন</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 সরকারি কলেজ। সর্বস্বত্ব সংরক্ষিত।</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+                  </html>
